@@ -232,8 +232,8 @@ export default {
     },
   },
   mounted() {
-    this.getProducts();
-    this.getRubriques();
+    // this.getProducts();
+    // this.getRubriques();
   },
 };
 </script>
