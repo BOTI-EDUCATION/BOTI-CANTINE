@@ -4,12 +4,12 @@
       <div class="left-side">
         <div class="contents">
           <div class="logo">
-            <img src="../../assets/icons/log.svg" alt="" srcset="" />
+            <img src="@/assets/icons/log.svg" alt="" srcset="" />
           </div>
 
           <div class="send-request">
             <div class="input-style">
-              <img src="../../assets/icons/login.svg" alt="" />
+              <img src="@/assets/icons/login.svg" alt="" />
               <input
                 type="text"
                 placeholder="Adresse email"
@@ -17,7 +17,7 @@
               />
             </div>
             <div class="input-style">
-              <img src="../../assets/icons/password.svg" alt="" />
+              <img src="@/assets/icons/password.svg" alt="" />
               <input
                 type="password"
                 placeholder="Mot de passe"
@@ -113,7 +113,7 @@ export default {
 }
 
 .input-style {
-  width: calc(100% - 50px);
+  /* width: calc(100% - 50px); */
   background: #f4f4f4;
   padding: 16px 25px;
   margin-bottom: 20px;
