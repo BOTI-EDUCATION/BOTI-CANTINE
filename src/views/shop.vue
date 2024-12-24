@@ -51,14 +51,14 @@
             :id="`pro-${product.id}`"
             @click="addToCart(product)"
           >
-            <div
+            <!-- <div
               style="
                 margin-right: 12px;
                 margin-top: 5px;
                 margin-bottom: -8px;
                 text-align: right;
               "
-            ></div>
+            ></div> -->
             <!-- Image product -->
             <div class="img">
               <img :src="product.image" alt="" srcset="" />
@@ -84,7 +84,7 @@
         <!---------------- CHOOSED PRODUCT ---------------->
         <div class="toshop">
           <template v-if="products_shoped.length > 0">
-            <h4 class="text-blue-dark" style="margin-bottom: 20px">
+            <h4 class="text-blue-dark" style="margin-top: 0px;margin-bottom: 20px">
               <span class="text-pink font-bold">{{
                 products_shoped.length
               }}</span>
@@ -94,7 +94,7 @@
             <!-- new design -->
 
             <div
-              class="card"
+              class="card w-100"
               v-for="product in products_shoped"
               :key="product.id"
             >
@@ -104,7 +104,7 @@
                 </div>
                 <div class="label">
                   <p>
-                    {{ product.label }}
+                    {{ product.label }} <br>
                     <span class="text-purple">
                       {{ product.prix }}<small>Dh</small>
                     </span>
@@ -115,6 +115,12 @@
                       >{{ product.qte }}</span
                     >
                   </p>
+                  <div class="price-pos">
+                    <span class="price">{{
+                      product.calc.toLocaleString("en")
+                    }}</span>
+                    <span class="text-purple font-bold">Dh</span>
+                  </div>
                 </div>
 
                 <button
@@ -124,12 +130,6 @@
                   <img src="../assets/icons/trash.svg" width="100%" />
                 </button>
 
-                <div class="price-pos">
-                  <span class="price">{{
-                    product.calc.toLocaleString("en")
-                  }}</span>
-                  <span class="text-purple font-bold">Dh</span>
-                </div>
               </div>
 
               <!-- buttons qte -->
@@ -160,6 +160,11 @@
     <!-- step 2  -->
     <template v-else-if="step == 2">
       <div class="secondeStep">
+        <div class="secondeStepNav text-left">
+          <a @click="step = 1" href="javascript:void(0);"><svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7 11.1962L1 6.09808L7 1" stroke="#9F9F9F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>&nbsp;&nbsp;&nbsp;Retour</a>
+        </div>
         <!-- <h2 class="text-blue-dark">Scanner le Qr code</h2> -->
 
         <!---------- TOTAL PRICE COMMANDE ------------>
@@ -194,15 +199,17 @@
           </div>
         </div>
         <!-----------------------  SEARCH ELEVE ----------------------->
-        <div class="search-eleve">
-          <input
-            type="text"
-            id="search_eleve"
-            placeholder="CNE, Nom complet"
-            v-model="searchedEleve"
-          />
-          <button class="light-btn" @click="searchEleve">Rechercher</button>
-        </div>
+        <form @submit.prevent="searchEleve">
+          <div class="search-eleve">
+            <input
+              type="text"
+              id="search_eleve"
+              placeholder="CNE, Nom complet"
+              v-model="searchedEleve"
+            />
+            <button class="light-btn" >Rechercher</button>
+          </div>
+        </form>
         <!----------------------- RESULT ELEVE ----------------------->
         <div
           v-for="eleve in eleves"
@@ -212,7 +219,8 @@
           @click="chooseEleve(eleve)"
         >
           <button
-            class="circle-sm boti-danger"
+            v-if="eleves.length == 1"
+            class="circle-sm boti-danger remove-eleve-btn"
             @click="removeEleve(eleve.eleve)"
           >
             <img src="../assets/icons/cancel.svg" alt="" />
@@ -234,19 +242,19 @@
                 </p>
               </div>
             </div>
-            <div class="text-left">
-              <p class="mb-6 text-blue-dark fs-16">&nbsp;&nbsp;&nbsp;Solde</p>
+            <div class="text-center">
+              <p class="mb-6 text-blue-dark fs-16">Solde</p>
               <p
                 v-if="eleves.length >= 1 && eleve.solde > 0"
                 class="mb-6 green-color font-bold fs-25"
               >
-                &nbsp;&nbsp;{{ eleve.solde }} <span class="font-light">Dh</span>
+                {{ eleve.solde }} <span class="font-light">Dh</span>
               </p>
               <p
-                v-else-if="eleves.length > 1 && eleve.solde == 0"
+                v-else-if="eleves.length >= 1 && eleve.solde == 0"
                 class="mb-6 warning-color font-bold fs-14"
               >
-                0
+                0 <span class="font-light">Dh</span>
               </p>
               <a
                 v-if="eleve.hasTransaction"
@@ -308,7 +316,7 @@ import Header from "@/components/Header.vue";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-let url = "https://boti.education/p/demo/boticantine";
+// let url = "https://boti.education/p/demo/boticantine";
 
 export default {
   components: {
@@ -335,7 +343,7 @@ export default {
   methods: {
     async getProducts() {
       await axios
-        .get(url + "/getProducts")
+        .get("products/getProducts")
         .then((res) => {
           console.log(res.data);
 
@@ -349,7 +357,7 @@ export default {
     },
     async getRubriques() {
       await axios
-        .get(url + "/rubriques")
+        .get("products/getRubriques")
         .then((res) => {
           this.rubriques = res.data.rubriques;
         })
@@ -440,7 +448,7 @@ export default {
       let search = this.searchedEleve.replace(" ", "_");
       console.log(search);
       await axios
-        .get(`${url}/getEleves/${search}`)
+        .get(`eleves/getEleves/${search}`)
         .then((res) => {
           this.eleves = res.data.eleves;
           this.originEleves = res.data.eleves;
@@ -457,9 +465,10 @@ export default {
       }
     },
     removeEleve(id) {
-      this.eleves = this.eleves.filter((elm) => {
-        return elm.eleve != id;
-      });
+      this.searchEleve();
+      // this.eleves = this.eleves.filter((elm) => {
+      //   return elm.eleve != id;
+      // });
     },
     // * ABOUT CONSOMMATION
     async validateConsommation(eleve) {
@@ -477,18 +486,34 @@ export default {
 
       await axios
         // .post('https://boti.education/ncsm/api/save-ticket-from-school', formData)
-        .post(`${url}/consommation_wallet`, formData)
-        .then((res) => {})
+        .post(`eleves/consommation_wallet`, formData)
+        .then((res) => {
+
+          this.products_shoped = [];
+          this.products_shoped_ids = [];
+          this.eleves = [];
+          this.total = 0;
+          this.products.map((product)=>{
+            product.qte = 0;
+            return product;
+          })
+            Swal.fire({
+              title: "Transaction validée",
+              // text: "Votre demande est communiqué au service CUSTOMER SUCCESS. Votre chargé de compte est bien notifié.",
+              icon: "success",
+            });
+        })
         .catch((err) => {
-          console.log(err);
+          
+          Swal.fire({
+              title: "Une erreure s'est produite",
+              // text: "Votre demande est communiqué au service CUSTOMER SUCCESS. Votre chargé de compte est bien notifié.",
+              icon: "danger",
+            });
+        }).finally(()=>{
+          this.step = 1;
         });
 
-      Swal.fire({
-        title: "Transaction validée",
-        // text: "Votre demande est communiqué au service CUSTOMER SUCCESS. Votre chargé de compte est bien notifié.",
-        icon: "success",
-      });
-      this.step = 1;
     },
     filterProducts(event) {
       this.products = this.productsOrigine;
