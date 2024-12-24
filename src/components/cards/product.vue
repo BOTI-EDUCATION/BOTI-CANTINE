@@ -14,7 +14,7 @@
       class="text-right"
       v-on:click="addToCart(product)"
     >
-      <img src="./assets/icons/cart.svg" width="12%" />
+      <!-- <img src="./assets/icons/cart.svg" width="12%" /> -->
     </a>
   </div>
   <!-- Image product -->
