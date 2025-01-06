@@ -50,6 +50,7 @@
             :key="product.id"
             :id="`pro-${product.id}`"
             @click="addToCart(product)"
+            :class="{ 'purple-border': product.choosed }"
           >
             <!-- <div
               style="
@@ -84,7 +85,10 @@
         <!---------------- CHOOSED PRODUCT ---------------->
         <div class="toshop">
           <template v-if="products_shoped.length > 0">
-            <h4 class="text-blue-dark" style="margin-top: 0px;margin-bottom: 20px">
+            <h4
+              class="text-blue-dark"
+              style="margin-top: 0px; margin-bottom: 20px"
+            >
               <span class="text-pink font-bold">{{
                 products_shoped.length
               }}</span>
@@ -104,7 +108,7 @@
                 </div>
                 <div class="label">
                   <p>
-                    {{ product.label }} <br>
+                    {{ product.label }} <br />
                     <span class="text-purple">
                       {{ product.prix }}<small>Dh</small>
                     </span>
@@ -129,7 +133,6 @@
                 >
                   <img src="../assets/icons/trash.svg" width="100%" />
                 </button>
-
               </div>
 
               <!-- buttons qte -->
@@ -161,9 +164,23 @@
     <template v-else-if="step == 2">
       <div class="secondeStep">
         <div class="secondeStepNav text-left">
-          <a @click="step = 1" href="javascript:void(0);"><svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7 11.1962L1 6.09808L7 1" stroke="#9F9F9F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>&nbsp;&nbsp;&nbsp;Retour</a>
+          <a @click="step = 1" href="javascript:void(0);"
+            ><svg
+              width="8"
+              height="12"
+              viewBox="0 0 8 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7 11.1962L1 6.09808L7 1"
+                stroke="#9F9F9F"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              /></svg
+            >&nbsp;&nbsp;&nbsp;Retour</a
+          >
         </div>
         <!-- <h2 class="text-blue-dark">Scanner le Qr code</h2> -->
 
@@ -207,7 +224,7 @@
               placeholder="CNE, Nom complet"
               v-model="searchedEleve"
             />
-            <button class="light-btn" >Rechercher</button>
+            <button class="light-btn">Rechercher</button>
           </div>
         </form>
         <!----------------------- RESULT ELEVE ----------------------->
@@ -256,7 +273,7 @@
               >
                 0 <span class="font-light">Dh</span>
               </p>
-              <a
+              <!-- <a
                 v-if="eleve.hasTransaction"
                 class="capsule boti-flex boti-align-center gap-10 boti-bg-purple"
               >
@@ -265,7 +282,7 @@
                 Transaction
 
                 <img src="../assets/icons/chevron-right.svg" alt="" />
-              </a>
+              </a> -->
             </div>
           </div>
         </div>
@@ -285,7 +302,8 @@
           class="validate mt-25"
           v-if="
             eleves.length == 1 &&
-            (eleves[0].solde > 0 || eleves[0].solde >= total)
+            eleves[0].solde > 0 &&
+            eleves[0].solde >= total
           "
           @click="validateConsommation(eleves[0])"
         >
@@ -294,7 +312,7 @@
         <button
           class="no-validate mt-25"
           disabled
-          v-if="
+          v-else-if="
             eleves.length == 1 &&
             (eleves[0].solde <= 0 || eleves[0].solde < total)
           "
@@ -345,8 +363,6 @@ export default {
       await axios
         .get("products/getProducts")
         .then((res) => {
-          console.log(res.data);
-
           this.products = res.data.products;
           this.productsOrigine = res.data.products;
           this.products_ids = res.data.ids;
@@ -395,12 +411,18 @@ export default {
       );
     },
     addActiveClasse(id) {
-      let card = document.querySelector(`#pro-${id}`);
-      card.classList.add("purple-border");
+      this.products.map((elm) => {
+        if (elm.id == id) {
+          elm.choosed = true;
+        }
+      })
     },
     removeActiveClasse(id) {
-      let card = document.querySelector(`#pro-${id}`);
-      card.classList.remove("purple-border");
+      this.products.map((elm) => {
+        if (elm.id == id) {
+          elm.choosed = false;
+        }
+      })
     },
     reduceQte(product) {
       product.qte -= 1;
@@ -488,32 +510,30 @@ export default {
         // .post('https://boti.education/ncsm/api/save-ticket-from-school', formData)
         .post(`eleves/consommation_wallet`, formData)
         .then((res) => {
-
           this.products_shoped = [];
           this.products_shoped_ids = [];
           this.eleves = [];
           this.total = 0;
-          this.products.map((product)=>{
+          this.products.map((product) => {
             product.qte = 0;
             return product;
-          })
-            Swal.fire({
-              title: "Transaction validée",
-              // text: "Votre demande est communiqué au service CUSTOMER SUCCESS. Votre chargé de compte est bien notifié.",
-              icon: "success",
-            });
+          });
+          Swal.fire({
+            title: "Transaction validée",
+            // text: "Votre demande est communiqué au service CUSTOMER SUCCESS. Votre chargé de compte est bien notifié.",
+            icon: "success",
+          });
         })
         .catch((err) => {
-          
           Swal.fire({
-              title: "Une erreure s'est produite",
-              // text: "Votre demande est communiqué au service CUSTOMER SUCCESS. Votre chargé de compte est bien notifié.",
-              icon: "danger",
-            });
-        }).finally(()=>{
+            title: "Une erreure s'est produite",
+            // text: "Votre demande est communiqué au service CUSTOMER SUCCESS. Votre chargé de compte est bien notifié.",
+            icon: "danger",
+          });
+        })
+        .finally(() => {
           this.step = 1;
         });
-
     },
     filterProducts(event) {
       this.products = this.productsOrigine;
