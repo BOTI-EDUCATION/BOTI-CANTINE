@@ -4,7 +4,9 @@
       <div class="left-side">
         <div class="contents">
           <div class="logo">
-            <img src="@/assets/icons/log.svg" alt="" srcset="" />
+            <!-- <img src="@/assets/icons/log.svg" alt="" srcset="" /> -->
+             <!-- <img src="https://static.vecteezy.com/system/resources/previews/009/418/828/non_2x/shop-marketing-3d-icon-illustration-for-your-website-user-interface-and-presentation-3d-render-illustration-free-png.png" alt="" srcset=""> -->
+              <p style="font-size: 38px;color:#f15959"> <b>ShopApp</b> </p>
           </div>
 
           <div class="send-request">
@@ -24,8 +26,12 @@
                 v-model="login.password"
               />
             </div>
-            <div class="text-right">
+
+            <!-- <div class="text-right">
               <a href="" class="rember">Mot de passe oublié ?</a>
+            </div> -->
+            <div class="text-right" v-if="store.error">
+              <span class="text-danger fs-14">{{ store.error }}</span>
             </div>
             <button class="login-btn" @click="auth">Se connecter</button>
           </div>
@@ -52,10 +58,11 @@ export default {
     };
   },
   methods: {
-    auth() {            
+    auth() {
       this.store.login(this.login);
     },
   },
+
 };
 </script>
 

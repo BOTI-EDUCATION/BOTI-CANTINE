@@ -40,6 +40,7 @@
           </button>
         </div>
       </div>
+      <!-- -->
 
       <div class="section-products">
         <!---------------- PRODUCT LIST ---------------->
@@ -49,7 +50,6 @@
             v-for="product in products"
             :key="product.id"
             :id="`pro-${product.id}`"
-            @click="addToCart(product)"
             :class="{ 'purple-border': product.choosed }"
           >
             <!-- <div
@@ -66,7 +66,7 @@
             </div>
             <!-- details -->
             <div class="text-center mt-2 w-90 mx-auto">
-              <h4 class="text-blue-dark font-bold mb-1 product-label">
+              <h4 class="text-blue-dark font-bold mb-1 product-label mb-3">
                 {{ product.label }}
               </h4>
 
@@ -77,8 +77,32 @@
                 {{ product.formated_prix }} Dh
               </div>
             </div>
-
-            <div></div>
+            <div v-if="product.sises.length > 0" class="sizez">
+              <button
+                v-for="(size, i) in product.sises"
+                @click="addSise(size, i, product.id)"
+                class="size-style"
+                :class="`size-style-${product.id}-${size}   size-${product.id}`"
+              >
+                {{ size }}
+              </button>
+            </div>
+            <template v-if="product.sises.length > 0">
+              <Button
+                @click="addToCart(product)"
+                class="btn-panier"
+                v-if="sizes[product.id]"
+              >
+                <i class="fa-solid fa-cart-shopping"></i>
+                Ajouter au panier</Button
+              >
+            </template>
+            <template v-else>
+              <Button @click="addToCart(product)" class="btn-panier">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Ajouter au panier</Button
+              >
+            </template>
           </div>
         </div>
 
@@ -108,7 +132,19 @@
                 </div>
                 <div class="label">
                   <p>
-                    {{ product.label }} <br />
+                    {{ product.label }}
+                    <span
+                      v-if="sizes[product.id]"
+                      style="
+                        color: #f3f7ff;
+                        background: #1f64e7;
+                        padding: 3px;
+                        border-radius: 5;
+                      "
+                    >
+                      {{ sizes[product.id].toUpperCase() }}
+                    </span>
+                    <br />
                     <span class="text-purple">
                       {{ product.prix }}<small>Dh</small>
                     </span>
@@ -259,63 +295,15 @@
                 </p>
               </div>
             </div>
-            <div class="text-center">
-              <p class="mb-6 text-blue-dark fs-16">Solde</p>
-              <p
-                v-if="eleves.length >= 1 && eleve.solde > 0"
-                class="mb-6 green-color font-bold fs-25"
-              >
-                {{ eleve.solde }} <span class="font-light">Dh</span>
-              </p>
-              <p
-                v-else-if="eleves.length >= 1 && eleve.solde == 0"
-                class="mb-6 warning-color font-bold fs-14"
-              >
-                0 <span class="font-light">Dh</span>
-              </p>
-              <!-- <a
-                v-if="eleve.hasTransaction"
-                class="capsule boti-flex boti-align-center gap-10 boti-bg-purple"
-              >
-                <img src="../assets/icons/transaction.svg" alt="" />
 
-                Transaction
-
-                <img src="../assets/icons/chevron-right.svg" alt="" />
-              </a> -->
-            </div>
           </div>
         </div>
-
-        <div
-          v-if="
-            eleves.length == 1 &&
-            (eleves[0].solde <= 0 || eleves[0].solde < total)
-          "
-          class="bg-light-orange card-item mt-25 boti-flex-center-center gap-10"
-        >
-          <img src="../assets/icons/noSolde.svg" alt="" />
-          <span class="font-bold fs-16">Solde insuffisant</span>
-        </div>
+        <textarea placeholder="Commantaite" class="mt-3" rows="5" style="padding-left:5px; width:100% ;background: white;outline: none;border-radius: 14px;" v-model="details"></textarea>
 
         <button
           class="validate mt-25"
-          v-if="
-            eleves.length == 1 &&
-            eleves[0].solde > 0 &&
-            eleves[0].solde >= total
-          "
+          v-if="eleves.length == 1"
           @click="validateConsommation(eleves[0])"
-        >
-          Valider
-        </button>
-        <button
-          class="no-validate mt-25"
-          disabled
-          v-else-if="
-            eleves.length == 1 &&
-            (eleves[0].solde <= 0 || eleves[0].solde < total)
-          "
         >
           Valider
         </button>
@@ -356,6 +344,9 @@ export default {
       step: 1,
       originEleves: [],
       eleves: [],
+      sizes: {},
+      sizesProducts: [],
+      details: "",
     };
   },
   methods: {
@@ -370,6 +361,21 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+    addSise(size, idx, product) {
+      let s = `${product}-${size}`;
+
+      this.sizes[product] = "";
+      this.sizes[product] = size;
+
+      document.querySelectorAll(`.size-${product}`).forEach((elm) => {
+        elm.classList.remove("active");
+      });
+
+      let item = document.querySelector(`.size-style-${s}`);
+      item.classList.add("active");
+
+      console.log(this.sizes);
     },
     async getRubriques() {
       await axios
@@ -415,14 +421,14 @@ export default {
         if (elm.id == id) {
           elm.choosed = true;
         }
-      })
+      });
     },
     removeActiveClasse(id) {
       this.products.map((elm) => {
         if (elm.id == id) {
           elm.choosed = false;
         }
-      })
+      });
     },
     reduceQte(product) {
       product.qte -= 1;
@@ -495,8 +501,10 @@ export default {
     // * ABOUT CONSOMMATION
     async validateConsommation(eleve) {
       let formData = new FormData();
-      formData.append("wallet", eleve.wallet);
+
+      formData.append("eleve", eleve.eleve);
       formData.append("total", this.total);
+      formData.append("details", this.details);
       formData.append("user", 1);
 
       this.products_shoped.map((elm) => {
@@ -504,6 +512,7 @@ export default {
         formData.append("qte[]", elm.qte);
         formData.append("pu[]", elm.prix);
         formData.append("total_price[]", elm.calc);
+        formData.append("sizes[]", this.sizes[elm.id]);
       });
 
       await axios
@@ -537,9 +546,8 @@ export default {
     },
     filterProducts(event) {
       this.products = this.productsOrigine;
-      let target = event.target.value;
+      let target = event.target.value.toLowerCase();
       if (target) {
-        target = target.toLowerCase();
         this.products = this.products.filter((item) => {
           return (
             item.label.toLowerCase().includes(target) ||
@@ -617,11 +625,50 @@ nav a:first-of-type {
     padding: 1rem 0;
     margin-top: 1rem;
   }
+
+  .btn-panier {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    border-radius: 14px;
+    color: #4c48c8;
+    border: 1px solid #4c48c8;
+    background: white;
+  }
+
+  .btn-panier:hover,
+  .btn-panier.activer {
+    background: #4c48c8;
+    color: white;
+  }
 }
 
 .w-app {
   width: 90%;
   margin: auto;
+}
+
+.sizez {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.size-style {
+  height: 33px;
+  width: 33px;
+  border-radius: 50%;
+  background: #f3f7ff;
+  color: #1f64e7;
+  font-weight: lighter;
+}
+
+.size-style.active {
+  color: #f3f7ff;
+  background: #1f64e7;
 }
 </style>
   

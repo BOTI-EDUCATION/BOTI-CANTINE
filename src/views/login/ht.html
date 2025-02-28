@@ -1,0 +1,47 @@
+<div class="text-center">
+  <p class="mb-6 text-blue-dark fs-16">Solde</p>
+  <p
+    v-if="eleves.length >= 1 && eleve.solde > 0"
+    class="mb-6 green-color font-bold fs-25"
+  >
+    {{ eleve.solde }} <span class="font-light">Dh</span>
+  </p>
+  <p
+    v-else-if="eleves.length >= 1 && eleve.solde == 0"
+    class="mb-6 warning-color font-bold fs-14"
+  >
+    0 <span class="font-light">Dh</span>
+  </p>
+  <!-- <a
+      v-if="eleve.hasTransaction"
+      class="capsule boti-flex boti-align-center gap-10 boti-bg-purple"
+    >
+      <img src="../assets/icons/transaction.svg" alt="" />
+
+      Transaction
+
+      <img src="../assets/icons/chevron-right.svg" alt="" />
+    </a> -->
+</div>
+
+<div
+  v-if="
+            eleves.length == 1 &&
+            (eleves[0].solde <= 0 || eleves[0].solde < total)
+          "
+  class="bg-light-orange card-item mt-25 boti-flex-center-center gap-10"
+>
+  <img src="../assets/icons/noSolde.svg" alt="" />
+  <span class="font-bold fs-16">Solde insuffisant</span>
+</div>
+
+<button
+class="no-validate mt-25"
+disabled
+v-else-if="
+  eleves.length == 1 &&
+  (eleves[0].solde <= 0 || eleves[0].solde < total)
+"
+>
+Valider
+</button>

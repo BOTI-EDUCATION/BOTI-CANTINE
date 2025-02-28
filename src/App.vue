@@ -19,8 +19,8 @@
 <script>
 // import { RouterLink, RouterView } from "vue-router";
 import Header from "./components/Header.vue";
-import Product from "./components/cards/product.vue";
 import axios from "axios";
+import Product from "./components/cards/product.vue";
 import Swal from "sweetalert2";
 
 let url = "https://boti.education/p/demo/boticantine";
