@@ -81,6 +81,10 @@
                 {{ detail.price ? detail.price + "dh" : "" }}
               </p>
             </template>
+            <div v-if="item.eleve" class="d-flex" style="gap: 10px;align-items: center;">
+              <img :src="item.eleve.img" height="30px" width="30px" style="border-radius: 50px;object-fit: cover;" alt="">
+              <span class="fs-15 text-left"> {{ item.eleve.nom_complet }}</span>
+            </div>
             <span class="text-gray fs-15 text-left"> {{ item.date }}</span>
           </div>
           <span class="text-blue-dark font-bold fs-25">
