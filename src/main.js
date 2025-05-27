@@ -22,7 +22,7 @@ const vuetify = createVuetify({
     directives
   })
 
-axios.defaults.baseURL = document.querySelector('meta[name="base_url"]').content||'https://boti.education/p/demo/cantineapi/';
+axios.defaults.baseURL = document.querySelector('meta[name="base_url"]').content||'https://boti.education/p/demo/shopapi/';
 
 const app = createApp(App)
 

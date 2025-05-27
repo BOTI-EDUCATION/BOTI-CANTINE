@@ -55,7 +55,7 @@
         <input
           type="text"
           @keyup="searchProduit($event)"
-          placeholder="Recherche par produit"
+          placeholder="Recherche par élève "
         />
       </div>
     </div>
