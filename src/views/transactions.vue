@@ -81,8 +81,18 @@
                 {{ detail.price ? detail.price + "dh" : "" }}
               </p>
             </template>
-            <div v-if="item.eleve" class="d-flex" style="gap: 10px;align-items: center;">
-              <img :src="item.eleve.img" height="30px" width="30px" style="border-radius: 50px;object-fit: cover;" alt="">
+            <div
+              v-if="item.eleve"
+              class="d-flex"
+              style="gap: 10px; align-items: center"
+            >
+              <img
+                :src="item.eleve.img"
+                height="30px"
+                width="30px"
+                style="border-radius: 50px; object-fit: cover"
+                alt=""
+              />
               <span class="fs-15 text-left"> {{ item.eleve.nom_complet }}</span>
             </div>
             <span class="text-gray fs-15 text-left"> {{ item.date }}</span>
@@ -130,15 +140,13 @@ export default {
     searchProduit(event) {
       let target = event.target.value.toLowerCase();
       let searched = [];
+      console.log(target);
+
       if (target) {
         this.original_data.map((item) => {
-          if (item.details.length > 0) {
-            item.details.filter((det) => {
-              if (det.product.toLowerCase().includes(target)) {
-                searched.push(item);
-                this.transactions = searched;
-              }
-            });
+          if (item.eleve.nom_complet.toLowerCase().includes(target)) {
+            searched.push(item);
+            this.transactions = searched;
           }
         });
       } else this.transactions = this.original_data;
@@ -161,7 +169,7 @@ export default {
           console.log(err);
         });
     },
-    addZero(value) {      
+    addZero(value) {
       return String(value).length == 1 ? `0${value}` : value;
     },
   },
@@ -169,10 +177,12 @@ export default {
     date(newVal) {
       let start = new Date(newVal[0]);
       let end = new Date(newVal[1]);
-      start = `${this.addZero(start.getDate())}-${
-        this.addZero(start.getMonth() + 1)  
-      }-${start.getFullYear()}`;
-      end = `${this.addZero(end.getDate())}-${this.addZero(end.getMonth() + 1)}-${end.getFullYear()}`;
+      start = `${this.addZero(start.getDate())}-${this.addZero(
+        start.getMonth() + 1
+      )}-${start.getFullYear()}`;
+      end = `${this.addZero(end.getDate())}-${this.addZero(
+        end.getMonth() + 1
+      )}-${end.getFullYear()}`;
       console.log(start, end);
       this.filterperiode(start, end);
     },
