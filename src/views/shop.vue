@@ -27,7 +27,7 @@
             @click="filterRubrique('all', 'all')"
             id="rub-all"
           >
-            All
+            Tous
           </button>
           <button
             class="btn-light"
@@ -248,7 +248,7 @@
               {{ total
               }}<small class="font-bold" style="font-size: 25px">Dh</small>
             </p>
-            <span style="color: #6d6d6d">Total Commande</span>
+            <span style="color: #6d6d6d">Total de la commande</span>
           </div>
         </div>
         <!-----------------------  SEARCH ELEVE ----------------------->
@@ -298,7 +298,7 @@
 
           </div>
         </div>
-        <textarea placeholder="Commantaite" class="mt-3" rows="5" style="padding-left:5px; width:100% ;background: white;outline: none;border-radius: 14px;" v-model="details"></textarea>
+        <textarea placeholder="Commentaire" class="mt-3" rows="5" style="padding-left:5px; width:100% ;background: white;outline: none;border-radius: 14px;" v-model="details"></textarea>
 
         <button
           class="validate mt-25"
